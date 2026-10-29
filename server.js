@@ -1,4 +1,4 @@
-console.log("Hello, Node.js!");
+
 import express from 'express';
 
 const NODE_ENV = 'production';
