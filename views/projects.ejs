@@ -3,6 +3,21 @@
     <h2>
         <%= title %>
     </h2>
-    <p>Projects will be listed here.</p>
+
+    <ul class="item-list">
+        <% projects.forEach((project)=> { %>
+            <li>
+                <h3>
+                    <%= project.title %>
+                </h3>
+                <p><strong>Organization:</strong>
+                    <%= project.organization %>
+                </p>
+                <p>
+                    <%= project.description %>
+                </p>
+            </li>
+            <% }); %>
+    </ul>
 
     <%- include('partials/footer') %>

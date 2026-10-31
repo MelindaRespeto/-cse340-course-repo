@@ -3,6 +3,16 @@
     <h2>
         <%= title %>
     </h2>
-    <p>Organizations will be listed here.</p>
+
+    <div class="card-grid">
+        <% organizations.forEach((organization)=> { %>
+            <div class="card">
+                <img src="<%= organization.image %>" alt="<%= organization.name %> logo">
+                <h3>
+                    <%= organization.name %>
+                </h3>
+            </div>
+            <% }); %>
+    </div>
 
     <%- include('partials/footer') %>

@@ -36,3 +36,25 @@ footer {
     text-align: center;
     padding: 1rem;
 }
+
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 1rem;
+}
+
+.item-list li {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #3182ce;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.item-list h3 {
+    margin: 0 0 0.5rem;
+    color: #1a365d;
+}
