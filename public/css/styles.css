@@ -58,3 +58,10 @@ footer {
     margin: 0 0 0.5rem;
     color: #1a365d;
 }
+
+header img {
+    background-color: #ffffff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    height: 60px;
+}
