@@ -1,28 +1,42 @@
 import 'dotenv/config';
 import express from 'express';
-import path from 'path';
 import { fileURLToPath } from 'url';
+import path from 'path';
 
-const currentFilePath = fileURLToPath(import.meta.url);
-const currentDirPath = path.dirname(currentFilePath);
+// Define the application environment
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
+
+// Define the port number the server will listen on
+const PORT = process.env.PORT || 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(currentDirPath, 'public')));
+/**
+ * Configure Express middleware
+ */
 
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+/**
+ * Routes
+ */
 app.get('/', (req, res) => {
-  res.sendFile(path.join(currentDirPath, 'src', 'views', 'home.html'));
+  res.sendFile(path.join(__dirname, 'src/views/home.html'));
 });
 
 app.get('/organizations', (req, res) => {
-  res.sendFile(path.join(currentDirPath, 'src', 'views', 'organizations.html'));
+  res.sendFile(path.join(__dirname, 'src/views/organizations.html'));
 });
 
 app.get('/projects', (req, res) => {
-  res.sendFile(path.join(currentDirPath, 'src', 'views', 'projects.html'));
+  res.sendFile(path.join(__dirname, 'src/views/projects.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running at http://127.0.0.1:${PORT}`);
+  console.log(`Environment: ${NODE_ENV}`);
 });
