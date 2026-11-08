@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getAllOrganizations } from './src/models/organizations.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,12 +14,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-const organizations = [
-  { id: 1, name: 'BrightFuture', image: '/images/brightfuture-logo.png' },
-  { id: 2, name: 'GreenHarvest', image: '/images/greenharvest-logo.png' },
-  { id: 3, name: 'UnityServe', image: '/images/unityserve-logo.png' }
-];
 
 const projects = [
   { id: 1, title: 'Community Garden Cleanup', organization: 'GreenHarvest', description: 'Help clear and prepare shared garden beds.' },
@@ -37,7 +32,8 @@ app.get('/', (req, res) => {
   res.render('home', { title: 'Home' });
 });
 
-app.get('/organizations', (req, res) => {
+app.get('/organizations', async (req, res) => {
+  const organizations = await getAllOrganizations();
   res.render('organizations', { title: 'Organizations', organizations });
 });
 

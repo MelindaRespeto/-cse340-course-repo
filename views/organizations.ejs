@@ -7,10 +7,18 @@
     <div class="card-grid">
         <% organizations.forEach((organization)=> { %>
             <div class="card">
-                <img src="<%= organization.image %>" alt="<%= organization.name %> logo">
+                <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo">
                 <h3>
                     <%= organization.name %>
                 </h3>
+                <p>
+                    <%= organization.description %>
+                </p>
+                <p>
+                    <a href="mailto:<%= organization.contact_email %>">
+                        <%= organization.contact_email %>
+                    </a>
+                </p>
             </div>
             <% }); %>
     </div>
