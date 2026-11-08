@@ -26,7 +26,12 @@ app.use((req, res, next) => {
   });
   next(); // Pass control to the next middleware or route
 });
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 
+app.use((req, res, next) => {
+  res.locals.NODE_ENV = NODE_ENV;
+  next();
+});
 const projects = [
   { id: 1, title: 'Community Garden Cleanup', organization: 'GreenHarvest', description: 'Help clear and prepare shared garden beds.' },
   { id: 2, title: 'After-School Tutoring', organization: 'BrightFuture', description: 'Tutor local students in reading and math.' },
