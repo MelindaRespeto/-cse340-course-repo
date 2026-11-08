@@ -19,6 +19,11 @@ app.use((req, res, next) => {
   if (NODE_ENV === 'development') {
     console.log(`${req.method} ${req.url}`);
   }
+  // Middleware to make NODE_ENV available to all templates
+  app.use((req, res, next) => {
+    res.locals.NODE_ENV = NODE_ENV;
+    next();
+  });
   next(); // Pass control to the next middleware or route
 });
 
