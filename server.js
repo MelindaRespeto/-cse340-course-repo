@@ -7,31 +7,32 @@ import { getAllOrganizations } from './src/models/organizations.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 const PORT = process.env.PORT || 3000;
 
+const app = express();
+
+// Serve files from the public folder (CSS, images)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Template settings
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-// Middleware to log all incoming requests
+
+// Middleware to log all incoming requests (development only)
 app.use((req, res, next) => {
   if (NODE_ENV === 'development') {
     console.log(`${req.method} ${req.url}`);
   }
-  // Middleware to make NODE_ENV available to all templates
-  app.use((req, res, next) => {
-    res.locals.NODE_ENV = NODE_ENV;
-    next();
-  });
   next(); // Pass control to the next middleware or route
 });
-const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 
+// Middleware to make NODE_ENV available to all templates
 app.use((req, res, next) => {
   res.locals.NODE_ENV = NODE_ENV;
   next();
 });
+
 const projects = [
   { id: 1, title: 'Community Garden Cleanup', organization: 'GreenHarvest', description: 'Help clear and prepare shared garden beds.' },
   { id: 2, title: 'After-School Tutoring', organization: 'BrightFuture', description: 'Tutor local students in reading and math.' },
