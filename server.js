@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getAllOrganizations } from './src/models/organizations.js';
 import { getAllCategories } from './src/models/categories.js';
+import { getAllProjects } from './src/models/projects.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,11 +35,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const projects = [
-  { id: 1, title: 'Community Garden Cleanup', organization: 'GreenHarvest', description: 'Help clear and prepare shared garden beds.' },
-  { id: 2, title: 'After-School Tutoring', organization: 'BrightFuture', description: 'Tutor local students in reading and math.' },
-  { id: 3, title: 'Neighborhood Food Drive', organization: 'UnityServe', description: 'Collect and sort donations for local families.' }
-];
+
 
 app.get('/', (req, res) => {
   res.render('home', { title: 'Home' });
@@ -49,7 +46,8 @@ app.get('/organizations', async (req, res) => {
   res.render('organizations', { title: 'Organizations', organizations });
 });
 
-app.get('/projects', (req, res) => {
+app.get('/projects', async (req, res) => {
+  const projects = await getAllProjects();
   res.render('projects', { title: 'Projects', projects });
 });
 
