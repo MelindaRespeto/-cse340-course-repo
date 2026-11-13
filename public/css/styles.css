@@ -65,3 +65,25 @@ header img {
     border-radius: 6px;
     height: 60px;
 }
+
+.tag-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag-list a {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #2c3e50;
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.tag-list a:hover {
+    background: #3b82c4;
+}

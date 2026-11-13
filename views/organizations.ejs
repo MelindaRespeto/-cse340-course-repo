@@ -9,7 +9,9 @@
             <div class="card">
                 <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo">
                 <h3>
-                    <%= organization.name %>
+                    <a href="/organization/<%= organization.organization_id %>">
+                        <%= organization.name %>
+                    </a>
                 </h3>
                 <p>
                     <%= organization.description %>

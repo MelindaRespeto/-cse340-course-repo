@@ -2,9 +2,9 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getAllOrganizations } from './src/models/organizations.js';
-import { getAllCategories } from './src/models/categories.js';
-import { getAllProjects } from './src/models/projects.js';
+import { getAllOrganizations, getOrganizationById } from './src/models/organizations.js';
+import { getAllCategories, getCategoryById, getCategoriesByProjectId } from './src/models/categories.js';
+import { getAllProjects, getProjectById, getProjectsByCategoryId, getProjectsByOrganizationId } from './src/models/projects.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,8 +35,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 app.get('/', (req, res) => {
   res.render('home', { title: 'Home' });
 });
@@ -46,9 +44,27 @@ app.get('/organizations', async (req, res) => {
   res.render('organizations', { title: 'Organizations', organizations });
 });
 
+app.get('/organization/:id', async (req, res) => {
+  const organization = await getOrganizationById(req.params.id);
+  if (!organization) {
+    return res.status(404).send('Organization not found');
+  }
+  const projects = await getProjectsByOrganizationId(req.params.id);
+  res.render('organization', { title: organization.name, organization, projects });
+});
+
 app.get('/projects', async (req, res) => {
   const projects = await getAllProjects();
   res.render('projects', { title: 'Projects', projects });
+});
+
+app.get('/project/:id', async (req, res) => {
+  const project = await getProjectById(req.params.id);
+  if (!project) {
+    return res.status(404).send('Project not found');
+  }
+  const categories = await getCategoriesByProjectId(req.params.id);
+  res.render('project', { title: project.title, project, categories });
 });
 
 app.get('/categories', async (req, res) => {
@@ -56,6 +72,19 @@ app.get('/categories', async (req, res) => {
   res.render('categories', { title: 'Categories', categories });
 });
 
-app.listen(PORT, () => {
+app.get('/category/:id', async (req, res) => {
+  const category = await getCategoryById(req.params.id);
+  if (!category) {
+    return res.status(404).send('Category not found');
+  }
+  const projects = await getProjectsByCategoryId(req.params.id);
+  res.render('category', { title: category.name, category, projects });
+});
+
+app.listen(PORT, (error) => {
+  if (error) {
+    console.error('Could not start the server:', error.message);
+    return;
+  }
   console.log(`Server is running at http://localhost:${PORT}`);
 });

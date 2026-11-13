@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+    <h2>
+        <%= project.title %>
+    </h2>
+
+    <p><strong>Organization:</strong>
+        <%= project.organization_name %>
+    </p>
+    <p>
+        <%= project.description %>
+    </p>
+    <p><strong>Location:</strong>
+        <%= project.location %>
+    </p>
+    <p><strong>Date:</strong>
+        <%= project.project_date.toLocaleDateString() %>
+    </p>
+
+    <p><strong>Categories:</strong></p>
+    <ul class="tag-list">
+        <% categories.forEach((category)=> { %>
+            <li>
+                <a href="/category/<%= category.category_id %>">
+                    <%= category.name %>
+                </a>
+            </li>
+            <% }); %>
+    </ul>
+
+    <p><a href="/projects">&larr; Back to all projects</a></p>
+
+    <%- include('partials/footer') %>
