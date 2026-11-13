@@ -3,6 +3,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getAllOrganizations } from './src/models/organizations.js';
+import { getAllCategories } from './src/models/categories.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,13 +40,6 @@ const projects = [
   { id: 3, title: 'Neighborhood Food Drive', organization: 'UnityServe', description: 'Collect and sort donations for local families.' }
 ];
 
-const categories = [
-  { id: 1, name: 'Education' },
-  { id: 2, name: 'Environment' },
-  { id: 3, name: 'Hunger Relief' },
-  { id: 4, name: 'Community Building' }
-];
-
 app.get('/', (req, res) => {
   res.render('home', { title: 'Home' });
 });
@@ -59,7 +53,8 @@ app.get('/projects', (req, res) => {
   res.render('projects', { title: 'Projects', projects });
 });
 
-app.get('/categories', (req, res) => {
+app.get('/categories', async (req, res) => {
+  const categories = await getAllCategories();
   res.render('categories', { title: 'Categories', categories });
 });
 
