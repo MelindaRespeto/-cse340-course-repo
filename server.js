@@ -2,9 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getAllOrganizations, getOrganizationById } from './src/models/organizations.js';
-import { getAllCategories, getCategoryById, getCategoriesByProjectId } from './src/models/categories.js';
-import { getAllProjects, getProjectById, getProjectsByCategoryId, getProjectsByOrganizationId } from './src/models/projects.js';
+import router from './src/routes/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Template settings
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'src', 'views'));
+app.set('views', path.join(__dirname, 'views'));
 
 // Middleware to log all incoming requests (development only)
 app.use((req, res, next) => {
@@ -35,51 +33,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
-  res.render('home', { title: 'Home' });
-});
-
-app.get('/organizations', async (req, res) => {
-  const organizations = await getAllOrganizations();
-  res.render('organizations', { title: 'Organizations', organizations });
-});
-
-app.get('/organization/:id', async (req, res) => {
-  const organization = await getOrganizationById(req.params.id);
-  if (!organization) {
-    return res.status(404).send('Organization not found');
-  }
-  const projects = await getProjectsByOrganizationId(req.params.id);
-  res.render('organization', { title: organization.name, organization, projects });
-});
-
-app.get('/projects', async (req, res) => {
-  const projects = await getAllProjects();
-  res.render('projects', { title: 'Projects', projects });
-});
-
-app.get('/project/:id', async (req, res) => {
-  const project = await getProjectById(req.params.id);
-  if (!project) {
-    return res.status(404).send('Project not found');
-  }
-  const categories = await getCategoriesByProjectId(req.params.id);
-  res.render('project', { title: project.title, project, categories });
-});
-
-app.get('/categories', async (req, res) => {
-  const categories = await getAllCategories();
-  res.render('categories', { title: 'Categories', categories });
-});
-
-app.get('/category/:id', async (req, res) => {
-  const category = await getCategoryById(req.params.id);
-  if (!category) {
-    return res.status(404).send('Category not found');
-  }
-  const projects = await getProjectsByCategoryId(req.params.id);
-  res.render('category', { title: category.name, category, projects });
-});
+// All routes live in the router
+app.use('/', router);
 
 app.listen(PORT, (error) => {
   if (error) {
