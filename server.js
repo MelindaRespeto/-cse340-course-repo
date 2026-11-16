@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   res.locals.NODE_ENV = NODE_ENV;
   next();
 });
-
+app.use(express.urlencoded({ extended: true }));
 // All routes live in the router
 app.use('/', router);
 

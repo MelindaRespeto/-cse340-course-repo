@@ -24,4 +24,16 @@ const getOrganizationById = async (organizationId) => {
     return result.rows[0];
 }
 
-export { getAllOrganizations, getOrganizationById }
+const createOrganization = async (name, description, contactEmail, logoFilename) => {
+    const query = `
+        INSERT INTO public.organization (name, description, contact_email, logo_filename)
+        VALUES ($1, $2, $3, $4)
+        RETURNING organization_id;
+    `;
+
+    const result = await db.query(query, [name, description, contactEmail, logoFilename]);
+
+    return result.rows[0].organization_id;
+}
+
+export { getAllOrganizations, getOrganizationById, createOrganization }
