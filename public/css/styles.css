@@ -87,3 +87,30 @@ header img {
 .tag-list a:hover {
     background: #3b82c4;
 }
+
+.form-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    width: 180px;
+    /* same width for every label, so the boxes line up */
+    padding-top: 0.4rem;
+}
+
+.form-group input,
+.form-group textarea {
+    flex: 1;
+    /* boxes fill the rest of the row */
+    max-width: 400px;
+    padding: 0.4rem;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
