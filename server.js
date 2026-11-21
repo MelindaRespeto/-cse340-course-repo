@@ -1,7 +1,10 @@
+
 import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import session from 'express-session';
+import flash from 'connect-flash';
 import router from './src/routes/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,7 +35,28 @@ app.use((req, res, next) => {
   res.locals.NODE_ENV = NODE_ENV;
   next();
 });
+
+// Read form data into req.body
 app.use(express.urlencoded({ extended: true }));
+
+// ===== 2b: Sessions and flash messages (goes here) =====
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(flash());
+
+// Make flash messages available to all templates
+app.use((req, res, next) => {
+  res.locals.messages = {
+    error: req.flash('error'),
+    success: req.flash('success')
+  };
+  next();
+});
+// ===== end of 2b =====
+
 // All routes live in the router
 app.use('/', router);
 

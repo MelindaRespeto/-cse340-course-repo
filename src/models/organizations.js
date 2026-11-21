@@ -1,39 +1,73 @@
-import db from '../../database/index.js'
+import { body, validationResult } from 'express-validator';
+import { getAllOrganizations, getOrganizationById, createOrganization } from '../models/organizations.js';
+import { getProjectsByOrganizationId } from '../models/projects.js';
 
-const getAllOrganizations = async () => {
-    const query = `
-        SELECT organization_id, name, description, contact_email, logo_filename
-        FROM public.organization
-        ORDER BY name;
-    `;
+// Define validation and sanitization rules for organization form
+const organizationValidation = [
+    body('name')
+        .trim()
+        .notEmpty()
+        .withMessage('Organization name is required')
+        .isLength({ min: 3, max: 150 })
+        .withMessage('Organization name must be between 3 and 150 characters'),
+    body('description')
+        .trim()
+        .notEmpty()
+        .withMessage('Organization description is required')
+        .isLength({ max: 500 })
+        .withMessage('Organization description cannot exceed 500 characters'),
+    body('contactEmail')
+        .normalizeEmail()
+        .notEmpty()
+        .withMessage('Contact email is required')
+        .isEmail()
+        .withMessage('Please provide a valid email address')
+];
 
-    const result = await db.query(query);
+const showOrganizationsPage = async (req, res) => {
+    const organizations = await getAllOrganizations();
+    res.render('organizations', { title: 'Organizations', organizations });
+};
 
-    return result.rows;
-}
+const showOrganizationDetailsPage = async (req, res) => {
+    const organization = await getOrganizationById(req.params.id);
+    if (!organization) {
+        return res.status(404).send('Organization not found');
+    }
+    const projects = await getProjectsByOrganizationId(req.params.id);
+    res.render('organization', { title: organization.name, organization, projects });
+};
 
-const getOrganizationById = async (organizationId) => {
-    const query = `
-        SELECT organization_id, name, description, contact_email, logo_filename
-        FROM public.organization
-        WHERE organization_id = $1;
-    `;
+const showNewOrganizationForm = async (req, res) => {
+    const title = 'Add New Organization';
+    res.render('new-organization', { title });
+};
 
-    const result = await db.query(query, [organizationId]);
+const processNewOrganizationForm = async (req, res) => {
+    // Check for validation errors
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+        // Validation failed - loop through errors
+        results.array().forEach((error) => {
+            req.flash('error', error.msg);
+        });
 
-    return result.rows[0];
-}
+        // Redirect back to the new organization form
+        return res.redirect('/new-organization');
+    }
 
-const createOrganization = async (name, description, contactEmail, logoFilename) => {
-    const query = `
-        INSERT INTO public.organization (name, description, contact_email, logo_filename)
-        VALUES ($1, $2, $3, $4)
-        RETURNING organization_id;
-    `;
+    const { name, description, contactEmail } = req.body;
+    const logoFilename = 'placeholder-logo.png'; // Use the placeholder logo for all new organizations
 
-    const result = await db.query(query, [name, description, contactEmail, logoFilename]);
+    const organizationId = await createOrganization(name, description, contactEmail, logoFilename);
+    req.flash('success', 'Organization added successfully!');
+    res.redirect(`/organization/${organizationId}`);
+};
 
-    return result.rows[0].organization_id;
-}
-
-export { getAllOrganizations, getOrganizationById, createOrganization }
+export {
+    organizationValidation,
+    showOrganizationsPage,
+    showOrganizationDetailsPage,
+    showNewOrganizationForm,
+    processNewOrganizationForm
+};

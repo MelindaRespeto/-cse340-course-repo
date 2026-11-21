@@ -1,0 +1,15 @@
+<% if (messages.error && messages.error.length> 0) { %>
+    <ul class="error-list">
+        <% messages.error.forEach((message)=> { %>
+            <li>
+                <%= message %>
+            </li>
+            <% }); %>
+    </ul>
+    <% } %>
+
+        <% if (messages.success && messages.success.length> 0) { %>
+            <p class="success-message">
+                <%= messages.success[0] %>
+            </p>
+            <% } %>
