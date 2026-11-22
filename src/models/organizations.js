@@ -64,10 +64,28 @@ const processNewOrganizationForm = async (req, res) => {
     res.redirect(`/organization/${organizationId}`);
 };
 
+const showEditOrganizationForm = async (req, res) => {
+    const organizationId = req.params.id;
+
+    // Get the existing organization data from the model
+    const organization = await getOrganizationById(organizationId);
+
+    // If no organization has this id, show a 404
+    if (!organization) {
+        return res.status(404).send('Organization not found');
+    }
+
+    res.render('edit-organization', {
+        title: 'Edit Organization',
+        organization
+    });
+};
+
 export {
     organizationValidation,
     showOrganizationsPage,
     showOrganizationDetailsPage,
     showNewOrganizationForm,
-    processNewOrganizationForm
+    processNewOrganizationForm,
+    showEditOrganizationForm
 };

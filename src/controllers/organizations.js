@@ -39,34 +39,46 @@ const showOrganizationDetailsPage = async (req, res) => {
 };
 
 const showNewOrganizationForm = async (req, res) => {
-    res.render('new-organization', {
-        title: 'Add New Organization',
-        errors: [],
-        formData: {}
-    });
+    const title = 'Add New Organization';
+    res.render('new-organization', { title });
 };
 
 const processNewOrganizationForm = async (req, res) => {
-    // Check the results of the validation rules
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        // Show the form again with the error messages and the user's input
-        return res.status(400).render('new-organization', {
-            title: 'Add New Organization',
-            errors: errors.array(),
-            formData: req.body
+    // Check for validation errors
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+        // Validation failed - loop through errors
+        results.array().forEach((error) => {
+            req.flash('error', error.msg);
         });
+
+        // Redirect back to the new organization form
+        return res.redirect('/new-organization');
     }
 
-    const { name, description, contactEmail, logoFilename } = req.body;
+    const { name, description, contactEmail } = req.body;
+    const logoFilename = 'placeholder-logo.png'; // Use the placeholder logo for all new organizations
 
-    // The logo column can't be empty, so use the placeholder when no filename is given
-    const logo = logoFilename && logoFilename.trim() ? logoFilename.trim() : 'placeholder-logo.png';
-
-    const organizationId = await createOrganization(name, description, contactEmail, logo);
-
+    const organizationId = await createOrganization(name, description, contactEmail, logoFilename);
+    req.flash('success', 'Organization added successfully!');
     res.redirect(`/organization/${organizationId}`);
+};
+
+const showEditOrganizationForm = async (req, res) => {
+    const organizationId = req.params.id;
+
+    // Get the existing organization data from the model
+    const organization = await getOrganizationById(organizationId);
+
+    // If no organization has this id, show a 404
+    if (!organization) {
+        return res.status(404).send('Organization not found');
+    }
+
+    res.render('edit-organization', {
+        title: 'Edit Organization',
+        organization
+    });
 };
 
 export {
@@ -74,5 +86,6 @@ export {
     showOrganizationsPage,
     showOrganizationDetailsPage,
     showNewOrganizationForm,
-    processNewOrganizationForm
+    processNewOrganizationForm,
+    showEditOrganizationForm
 };
