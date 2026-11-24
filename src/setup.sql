@@ -1,13 +1,16 @@
 -- ========================================
 -- Drop existing tables (so this file can be re-run)
+-- Order matters: drop tables that depend on others first
 -- ========================================
+DROP TABLE IF EXISTS public.users;
+DROP TABLE IF EXISTS public.roles;
 DROP TABLE IF EXISTS public.project_category;
 DROP TABLE IF EXISTS public.project;
 DROP TABLE IF EXISTS public.category;
 DROP TABLE IF EXISTS public.organization;
 
 -- ========================================
--- Create tables
+-- Create tables: Organizations, Projects, Categories
 -- ========================================
 CREATE TABLE public.organization (
     organization_id SERIAL PRIMARY KEY,
@@ -36,6 +39,34 @@ CREATE TABLE public.project_category (
     category_id INT NOT NULL REFERENCES public.category(category_id) ON DELETE CASCADE,
     PRIMARY KEY (project_id, category_id)
 );
+
+-- ========================================
+-- Create tables: Roles and Users (RBAC)
+-- roles must be created before users (users references roles)
+-- ========================================
+CREATE TABLE public.roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+CREATE TABLE public.users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER REFERENCES public.roles(role_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ========================================
+-- Insert initial data: Roles (2)
+-- role_id 1 = user, role_id 2 = admin
+-- ========================================
+INSERT INTO public.roles (role_name, role_description)
+VALUES
+('user', 'Standard user with basic access'),
+('admin', 'Administrator with full system access');
 
 -- ========================================
 -- Insert sample data: Organizations (3)
