@@ -1,4 +1,4 @@
-import db from './db.js'
+import db from '../../database/index.js'
 
 const createUser = async (name, email, passwordHash) => {
     const default_role = 'user';
